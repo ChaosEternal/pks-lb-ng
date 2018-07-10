@@ -84,7 +84,7 @@ class PKSHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                 
 
 def test(HandlerClass = PKSHTTPRequestHandler,
-         ServerClass = BaseHTTPServer.HTTPServer, protocol="HTTP/1.0"):
+         ServerClass = BaseHTTPServer.HTTPServer, protocol="HTTP/1.1"):
 
     if sys.argv[1:]:
         port = int(sys.argv[1])
