@@ -1,0 +1,19 @@
+#!/bin/bash
+
+export PATH=/var/vcap/packages/pks-cli/bin:/var/vcap/jobs/pks-cli/bin:$PATH
+pks login -k -a pks.pcfdemo.com -u pksadm -p 123456
+
+mkdir -p /var/vcap/sys/run/pks-cli/ /var/vcap/sys/log/pks-cli/
+PIDFILE=/var/vcap/sys/run/pks-cli/pks-2-nginx.pid
+LOGDIR=/var/vcap/sys/log/pks-cli/pks-2-nginx.log
+
+case $1 in
+    start)
+	export LOCKFILE_PATH=/var/vcap/sys/run/pks-cli/pks-2-nginx.lck
+	export NGX_CONF_FILE=/var/vcap/jobs/nginx/sites-enabled
+	start-stop-daemon -S -p $PIDFILE -b -m -a /usr/bin/python /var/vcap/packages/pks-cli/bin/pks-2-nginx.py 8000
+	;;
+    stop)
+	pkill -F $PIDFILE
+	;;
+esac
