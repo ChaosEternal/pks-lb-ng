@@ -28,8 +28,8 @@ http {
            listen       8080 default_server;
            server_name  _;
            location / {
-             proxy_set_header Host $host;
-             proxy_set_header X-HTTPS-Protocol $ssl_protocol;
+             proxy_set_header Host \$host;
+             proxy_set_header X-HTTPS-Protocol \$ssl_protocol;
              proxy_set_header X-Forwarded-Proto https;
              proxy_pass http://ngx.internal;
            }
