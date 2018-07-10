@@ -53,8 +53,7 @@ def gen_ngx(cls):
         }}
     }}
     """.format(cls_name=i["parameters"]["kubernetes_master_host"], cls_m_ip=i["kubernetes_master_ips"][0])
-        l.append(a)
-        l.append("\n")
+        l += a + "\n"
     return l
 
 def find_domain_in_cls(d, cls):
@@ -69,14 +68,15 @@ class PKSHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
     def r404(self, d):
         self.send_error(404, "The cluster: %s does not exists!"%d)
     def r504(self):
-        self,send_error(504, "Please retry")
-    def do_GET(request):
+        self.send_error(504, "Please retry")
+    def do_GET(self):
         d = self.server.server_name
+        d = self.headers.get("Host", "localhost")
         with flockfn(os.getenv("LOCKFILE_PATH")):
             pks_login()
             cls = pks_getclusters()
-            if not find_domain_cls(d, cls):
-                return self.r404()
+            if not find_domain_in_cls(d, cls):
+                return self.r404(d)
             r = gen_ngx(cls)
             file(os.getenv("NGX_CONF_FILE"), "w").write(r)
             reloadngx()
@@ -84,8 +84,22 @@ class PKSHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
                 
 
 def test(HandlerClass = PKSHTTPRequestHandler,
-         ServerClass = BaseHTTPServer.HTTPServer):
-    SimpleHTTPServer.test(HandlerClass, ServerClass)
+         ServerClass = BaseHTTPServer.HTTPServer, protocol="HTTP/1.0"):
 
+    if sys.argv[1:]:
+        port = int(sys.argv[1])
+    else:
+        port = 8000
+    server_address = ('127.0.0.1', port)
+
+    HandlerClass.protocol_version = protocol
+    httpd = ServerClass(server_address, HandlerClass)
+
+    sa = httpd.socket.getsockname()
+    print "Serving HTTP on", sa[0], "port", sa[1], "..."
+    httpd.serve_forever()
+
+
+    
 if __name__ == "__main__":
-    return test()
+    test()

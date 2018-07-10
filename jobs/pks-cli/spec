@@ -4,3 +4,6 @@ packages:
 - pks-cli
 templates:
   flush-ngx.erb: bin/flush-ngx
+  ctl.erb: bin/ctl
+  pks-login.erb: bin/pks-login
+  reload_ngx.erb: bin/reload_ngx

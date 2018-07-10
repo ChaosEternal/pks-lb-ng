@@ -1,0 +1,5 @@
+check process pks-2-nginx
+  with pidfile /var/vcap/sys/run/pks-cli/pks-2-nginx.pid
+  start program "/var/vcap/jobs/pks-cli/bin/ctl start"
+  stop program "/var/vcap/jobs/pks-cli/bin/ctl stop"
+  group vcap
