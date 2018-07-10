@@ -1,0 +1,62 @@
+---
+name: k8s-ws
+
+releases:
+- name: docker
+  version: latest
+- name: bosh-dns
+  version: latest
+- name: bosh-dns-aliases
+  version: latest
+- name: kubo
+  version: latest
+- name: nginx
+  version: latest
+- name: pks-ng-lb
+  version: latest
+
+update:
+  canaries: 1
+  max_in_flight: 2
+  canary_watch_time: 1000-30000
+  update_watch_time: 1000-30000
+
+  
+instance_groups:
+- name: k8s-ws
+  azs:
+  - nova
+  instances: 1
+  vm_type: m1.small
+  stemcell: default
+  update:
+    max_in_flight: 1
+    serial: true
+  networks:
+  - default:
+    - dns
+    - gateway
+    name: pcf
+  - name: vip-network
+    static_ips:
+    - 192.168.130.128
+  jobs:
+  - name: docker
+    release: docker
+  - name: kubernetes-dependencies
+    release: kubo
+  - name: pks-cli
+    release: pks-ng-lb
+  - name: nginx
+    release: nginx
+    properties:
+      nginx_conf: |
+        #
+      pre_start: |
+        #!/bin/bash
+        mkdir -p /var/vcap/jobs/nginx/sites-enabled/        
+
+stemcells:
+- alias: default
+  os: ubuntu-trusty
+  version: "3586.24"
