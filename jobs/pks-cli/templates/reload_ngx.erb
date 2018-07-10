@@ -1,3 +1,4 @@
 #!/bin/bash
 #pkill -HUP /var/vcap/sys/run/nginx/nginx.pid
-monit restart nginx
+
+/var/vcap/packages/nginx/sbin/nginx -g pid /var/vcap/sys/run/nginx/nginx.pid; -c /var/vcap/jobs/nginx/etc/nginx.conf -s reload
