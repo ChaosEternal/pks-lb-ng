@@ -7,3 +7,4 @@ templates:
   ctl.erb: bin/ctl
   pks-login.erb: bin/pks-login
   reload_ngx.erb: bin/reload_ngx
+  pre-start.erb: bin/pre-start
