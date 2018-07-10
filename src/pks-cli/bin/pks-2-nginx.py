@@ -3,7 +3,7 @@ import sys, os, json
 import fcntl
 from contextlib import contextmanager
 import BaseHTTPServer
-import SimpleHTTPServer
+import SimpleHTTPServer, time
 
 
     
@@ -80,6 +80,7 @@ class PKSHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             r = gen_ngx(cls)
             file(os.getenv("NGX_CONF_FILE"), "w").write(r)
             reloadngx()
+            time.sleep(30)
             return self.r504()
                 
 
