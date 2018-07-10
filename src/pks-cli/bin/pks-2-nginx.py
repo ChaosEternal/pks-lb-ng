@@ -82,3 +82,10 @@ class PKSHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             reloadngx()
             return self.r504()
                 
+
+def test(HandlerClass = PKSHTTPRequestHandler,
+         ServerClass = BaseHTTPServer.HTTPServer):
+    SimpleHTTPServer.test(HandlerClass, ServerClass)
+
+if __name__ == "__main__":
+    return test()
