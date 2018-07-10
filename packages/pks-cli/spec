@@ -1,0 +1,4 @@
+---
+name: pks-cli
+files:
+- pks-cli/**/*

@@ -1,0 +1,6 @@
+---
+name: pks-cli
+packages:
+- pks-cli
+templates:
+  flush-ngx.erb: bin/flush-ngx

@@ -1,0 +1,6 @@
+#!/bin/bash
+
+export PATH=/var/vcap/packages/pks-cli/bin:$PATH
+pks login -k -a pks.pcfdemo.com -u pksadm -p 123456
+python /var/vcap/packages/pks-cli/bin/update-ngx.py > /var/vcap/jobs/nginx/sites-enabled/all-cls.conf
+pkill -HUP /var/vcap/sys/run/nginx/nginx.pid

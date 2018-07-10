@@ -1,0 +1,5 @@
+dev_releases/
+src/pks-cli/bin/pks
+src/pks-cli/bin/kubectl
+.dev_builds
+*~
