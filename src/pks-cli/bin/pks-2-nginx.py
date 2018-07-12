@@ -62,8 +62,8 @@ def gen_ngx(cls):
     """.format(cls_name=i["parameters"]["kubernetes_master_host"], cls_m_ip=i["kubernetes_master_ips"][0])
         l += api + "\n"
         workers = get_worknodes(i)
-        cls_workers_ssl = "\n".join(["server %s:18443 ;"%x for x in workers])
-        cls_workers = "\n".join(["server %s:18080 ;"%x for x in workers])
+        cls_workers_ssl = "\n".join(["server %s:30443 ;"%x for x in workers])
+        cls_workers = "\n".join(["server %s:30080 ;"%x for x in workers])
         ingress = """upstream worker-ssl.{cls_name} {{
         {cls_workers_ssl}
     }}
