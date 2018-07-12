@@ -18,6 +18,13 @@ http {
         error_log /var/vcap/sys/log/nginx/error.log;
         gzip on;
         gzip_disable "msie6";
+        map $http_upgrade $connection_upgrade {
+           default Upgrade;
+           ''      Close;
+        }
+        proxy_set_header Upgrade $http_upgrade;
+        proxy_set_header Connection $connection_upgrade;
+
 
         include /var/vcap/jobs/nginx/sites-enabled/*;
         upstream ngx.internal {

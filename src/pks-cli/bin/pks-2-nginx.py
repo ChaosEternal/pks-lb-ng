@@ -27,6 +27,13 @@ def pks_getclusters():
     cls = json.loads(cls_js)
     return cls
 
+def get_worknodes(c):
+    cuuid   = c["uuid"]
+    hosts   = file("/etc/hosts").readlines()
+    workers = [x.split(' ')[0] for x in hosts if x.find(cuuid)>-1 and x.find("worker") > -1 ]
+    return workers
+    
+
 def gen_ngx(cls):
     l = ""
     for i in cls:
@@ -34,7 +41,7 @@ def gen_ngx(cls):
             continue
         if i["last_action"] != "CREATE":
             continue
-        a = """upstream {cls_name} {{
+        api = """upstream {cls_name} {{
         server {cls_m_ip}:8443;
     }}
     server {{
@@ -53,7 +60,33 @@ def gen_ngx(cls):
         }}
     }}
     """.format(cls_name=i["parameters"]["kubernetes_master_host"], cls_m_ip=i["kubernetes_master_ips"][0])
-        l += a + "\n"
+        l += api + "\n"
+        workers = get_worknodes(i)
+        cls_workers_ssl = "\n".join(["server %s:18443 ;"%x for x in workers])
+        cls_workers = "\n".join(["server %s:18080 ;"%x for x in workers])
+        ingress = """upstream worker-ssl.{cls_name} {{
+        {cls_workers_ssl}
+    }}
+    upstream worker.{cls_name} {{
+        {cls_workers}
+    }}
+    server {{
+        client_max_body_size 10G;
+        listen       8080 ;
+        server_name  *.{cls_name};
+        location / {{
+            proxy_set_header Host $host;
+            proxy_set_header X-HTTPS-Protocol $ssl_protocol;
+            proxy_set_header X-Forwarded-Proto https;
+            proxy_pass http://worker.{cls_name};
+        }}
+
+        error_page 404 /404.html;
+            location = /40x.html {{
+        }}
+    }}
+""".format(cls_name=i["parameters"]["kubernetes_master_host"], cls_workers_ssl=cls_workers_ssl, cls_workers=cls_workers)
+        l += ingress + "\n"
     return l
 
 def find_domain_in_cls(d, cls):
