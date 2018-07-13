@@ -37,9 +37,10 @@ def get_worknodes(c):
 def gen_ngx(cls):
     l = ""
     for i in cls:
-        if i["last_action_state"] != "succeeded":
-            continue
-        if i["last_action"] != "CREATE":
+        if i["last_action"] == "CREATE":
+            if i["last_action_state"] != "succeeded":
+                continue
+        if i["last_action"] not in ["CREATE", "UPDATE"]:
             continue
         api = """upstream {cls_name} {{
         server {cls_m_ip}:8443;
