@@ -89,7 +89,7 @@ def gen_ngx(cls):
             location = /40x.html {{
         }}
     }}
-""".format(cls_name=i["parameters"]["kubernetes_master_host"], cls_workers_ssl=cls_workers_ssl, cls_workers=cls_workers, cls_name_escaped=cls_workers.replace(".", "\\."))
+""".format(cls_name=i["parameters"]["kubernetes_master_host"], cls_workers_ssl=cls_workers_ssl, cls_workers=cls_workers, cls_name_escaped=i["parameters"]["kubernetes_master_host"].replace(".", "\\."))
         l += ingress + "\n"
     return l
 
