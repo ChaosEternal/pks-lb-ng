@@ -77,9 +77,9 @@ def gen_ngx(cls):
     server {{
         client_max_body_size 10G;
         listen       8080 ;
-        server_name  *.{cls_name};
+        server_name  ~^(?<hostpart>.*)\\.{cls_name_escaped}$;
         location / {{
-            proxy_set_header Host $host;
+            proxy_set_header Host $hostpart;
             proxy_set_header X-HTTPS-Protocol $ssl_protocol;
             proxy_set_header X-Forwarded-Proto https;
             proxy_pass http://worker.{cls_name};
@@ -89,7 +89,7 @@ def gen_ngx(cls):
             location = /40x.html {{
         }}
     }}
-""".format(cls_name=i["parameters"]["kubernetes_master_host"], cls_workers_ssl=cls_workers_ssl, cls_workers=cls_workers)
+""".format(cls_name=i["parameters"]["kubernetes_master_host"], cls_workers_ssl=cls_workers_ssl, cls_workers=cls_workers, cls_name_escaped=cls_workers.replace(".", "\\."))
         l += ingress + "\n"
     return l
 
