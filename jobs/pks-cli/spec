@@ -8,3 +8,13 @@ templates:
   pks-login.erb: bin/pks-login
   reload_ngx.erb: bin/reload_ngx
   pre-start.erb: bin/pre-start
+properties:
+  pks:
+    description: the hostname of pks server
+    default: pks.pcfdemo.com
+  admuser:
+    description: the admin username of pks
+    default: pksadm
+  admpass:
+    description: the password
+    default: "123456"
