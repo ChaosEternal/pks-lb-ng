@@ -1,4 +1,4 @@
 #!/bin/bash
 
 export PATH=/var/vcap/packages/pks-cli/bin:$PATH
-pks login -k -a <% p("pks") %> -u <% p("admuser") %> -p "<% p("admpass") %>"
+pks login -k -a <%= p("pks") %> -u <%= p("admuser") %> -p "<%= p("admpass") %>"
