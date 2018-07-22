@@ -67,9 +67,10 @@ def gen_ngx(cls):
         l += api + "\n"
         workers = get_worknodes(i)
         cls_workers_ssl = "\n".join(["server %s:30443 ;"%x for x in workers])
+        cls_dash_ssl = "\n".join(["server %s:31443 ;"%x for x in workers])
         cls_workers = "\n".join(["server %s:30080 ;"%x for x in workers])
         ingress = """upstream worker-ssl.{cls_name} {{
-        {cls_workers_ssl}
+        {cls_dash_ssl}
     }}
     upstream worker.{cls_name} {{
         {cls_workers}
@@ -89,7 +90,22 @@ def gen_ngx(cls):
             location = /40x.html {{
         }}
     }}
-""".format(cls_name=i["parameters"]["kubernetes_master_host"], cls_workers_ssl=cls_workers_ssl, cls_workers=cls_workers, cls_name_escaped=i["parameters"]["kubernetes_master_host"].replace(".", "\\."))
+    server {{
+        client_max_body_size 10G;
+        listen       8443 ;
+        server_name  ~^(?<hostpart>.*)\\.{cls_name_escaped}$;
+        location / {{
+            proxy_set_header Host $hostpart;
+            proxy_set_header X-HTTPS-Protocol $ssl_protocol;
+            proxy_set_header X-Forwarded-Proto https;
+            proxy_pass https://worker-ssl.{cls_name};
+        }}
+
+        error_page 404 /404.html;
+            location = /40x.html {{
+        }}
+    }}
+""".format(cls_name=i["parameters"]["kubernetes_master_host"], cls_dash_ssl=cls_dash_ssl, cls_workers=cls_workers, cls_name_escaped=i["parameters"]["kubernetes_master_host"].replace(".", "\\."))
         l += ingress + "\n"
     return l
 
