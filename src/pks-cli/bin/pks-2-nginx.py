@@ -201,7 +201,7 @@ class PKSHTTPRequestHandler(BaseHTTPServer.BaseHTTPRequestHandler):
             ss = gen_index(cls)
             file(os.getenv("NGX_INDEX_FILE"), "w").write(ss)
             reloadngx()
-            time.sleep(30)
+            time.sleep(3)
             return self.r504()
                 
 
