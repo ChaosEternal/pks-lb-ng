@@ -11,9 +11,9 @@ case $1 in
     start)
 	export LOCKFILE_PATH=/var/vcap/sys/run/pks-cli/pks-2-nginx.lck
 	export NGX_CONF_FILE=/var/vcap/jobs/nginx/sites-enabled/all-pks.conf
-	mkdir -p /var/vcap/jobs/nginx/index/
-	cp /var/vcap/packages/pks-cli/css/application.css /var/vcap/jobs/nginx/index/ || true
-	export NGX_INDEX_FILE=/var/vcap/jobs/nginx/index/index.html
+	mkdir -p /var/vcap/store/nginx/index
+	cp /var/vcap/packages/pks-cli/css/application.css /var/vcap/store/nginx/index/ || true
+	export NGX_INDEX_FILE=/var/vcap/store/nginx/index/index.html
 	start-stop-daemon -S -p $PIDFILE -b -m -a /bin/bash -- -c "exec /usr/bin/python /var/vcap/packages/pks-cli/bin/pks-2-nginx.py 8000 &> $LOGFILE"
 	;;
     stop)
