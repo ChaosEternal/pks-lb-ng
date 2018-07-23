@@ -45,6 +45,19 @@ http {
         location = /40x.html {
           }
         }
+       server {
+           client_max_body_size 10G;
+           listen       8080 ;
+           server_name  index.pks.*;
+           location / {
+	     root /var/vcap/jobs/nginx/index/
+           }
+
+        error_page 404 /404.html;
+        location = /40x.html {
+          }
+        }
+
 
 }
 #
